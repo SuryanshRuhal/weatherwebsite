@@ -21,13 +21,21 @@ setInterval(() => {
     Time.innerHTML= (hour <10? "0"+ hour: hour)+":"+(minutes <10? "0"+ minutes : minutes );
     dates.innerHTML= days[day]+","+ date +" "+ months[month];
 }, 1000);
+navigator.geolocation.getCurrentPosition((success)=>{
+  console.log(success.coords);
+        let{latitude, longitude}= success.coords;
+        getWeatherInfo(city.value);
+})
 
 
 function getWeatherInfo(city){
     navigator.geolocation.getCurrentPosition((success)=>{
         console.log(success.coords);
         let{latitude, longitude}= success.coords;
-        const q= city;
+       // const q= city;
+        if(city==""||city==null){
+          city="delhi";
+          }
         fetch(`https://api.openweathermap.org/data/2.5/forecast?q=`+city+`&appid=${apikey}&units=metric`).then(res => res.json()).then(data => {
             console.log(data);
             timezone.innerHTML= data.city.name;
@@ -41,7 +49,7 @@ function getWeatherInfo(city){
             winds.innerHTML= data.list[0].wind.speed +" m/s";
             tem.innerHTML= data.list[0].main.temp +" C";
             weatherData(data);
-            
+    
               if(anu=="01d"||anu=="01n"||anu=="02d"||anu=="02n"){
                 document.querySelector('#comp').style.setProperty('--background','url(img/sunny.jpg) no-repeat center center/cover');
               } else if(anu=="04d"||anu=="04n"||anu=="03d"||anu=="03n"){
@@ -66,7 +74,6 @@ function getWeatherInfo(city){
         });
     });
 }
-
 submit.addEventListener('click',(e)=>{
     e.preventDefault();
     getWeatherInfo(city.value);
